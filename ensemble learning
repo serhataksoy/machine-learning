@@ -1,0 +1,31 @@
+import pandas as pd
+import numpy as np
+df = pd.read_csv("C:/Users/Serhat/Desktop/veri bilimi/housing.csv")
+df.columns=("longitude","latitude","housing_median_age","total_rooms","total_bedrooms","population","households","median_income","median_house_value","ocean_proximity")
+df = df.drop("ocean_proximity",axis=1)
+df = df.drop("longitude",axis=1)
+df = df.drop("latitude",axis=1)
+X = df.iloc[:,:5].values
+Y = df.iloc[:,6].values
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+dt = DecisionTreeClassifier()
+np.nan_to_num(X)
+from sklearn.preprocessing import MinMaxScaler
+scaler1 = MinMaxScaler()
+X_std = scaler1.fit_transform(X)
+X_train, X_test, Y_train, Y_test = train_test_split(X_std, Y, test_size=0.3)
+np.isnan(X_train)
+X_train = pd.DataFrame(X_train).fillna(X_train.mean())
+dt.fit(X_train,Y_train)
+np.isnan(X_test)
+X_test = pd.DataFrame(X_test).fillna(X_test.mean())
+X_test.fillna(X_test.mean())
+np.all(np.isfinite(X_test))
+df[df==np.inf]=np.nan
+df.fillna(df.mean(), inplace=True)
+dt.score(X_test,Y_test)
+dt.score(X_train,Y_train)
+from sklearn. ensemble import BaggingClassifier
+bg = BaggingClassifier(DecisionTreeClassifier(), max_samples= 0.5, max_features = 1.0, n_estimators = 20)
+bg.fit(X_train,Y_train)
