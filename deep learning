@@ -1,0 +1,23 @@
+import pandas as pd
+df = pd.read_csv("C:/Users/Serhat/Desktop/veri bilimi/housing.csv")
+df.columns=("longitude","latitude","housing_median_age","total_rooms","total_bedrooms","population","households","median_income","median_house_value","ocean_proximity")
+df = df.drop("ocean_proximity",axis=1)
+df = df.drop("longitude",axis=1)
+df = df.drop("latitude",axis=1)
+X = df.iloc[:,:5].values
+Y = df.iloc[:,6].values
+from sklearn.model_selection import train_test_split
+X_train, X_val_and_test, Y_train, Y_val_and_test = train_test_split(X, Y, test_size=0.3)
+X_val, X_test, Y_val, Y_test = train_test_split(X_val_and_test, Y_val_and_test, test_size=0.5)
+from tensorflow import keras
+from tensorflow.keras import layers
+from keras.models import Sequential
+model = keras.Sequential(
+    [
+        layers.Dense(2, activation='softmax', name="layer1"),
+        layers.Dense(3, activation='softmax', name="layer2"),
+        layers.Dense(4, name="layer3"),
+    ]
+)
+model.compile(optimizer='adam',loss='categorical_crossentropy',metrics=['accuracy'])
+tr = model.fit(X_train, Y_train,batch_size=32, epochs=30,validation_data=(X_val, Y_val))
